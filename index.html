@@ -1,105 +1,128 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Sonic</title>
+    <title>Jogo de Perguntas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
-
-        .quiz-container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .game-container {
+            background-color: white;
             padding: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        h1 {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
             text-align: center;
         }
-
         .question {
             font-size: 20px;
             margin-bottom: 20px;
         }
-
-        .options {
-            list-style: none;
-            padding: 0;
+        .options button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
         }
-
-        .options li {
-            margin: 10px 0;
+        .options button:hover {
+            background-color: #45a049;
         }
-
-        .btn {
+        .options button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+        .timer {
+            font-size: 24px;
+            margin: 20px 0;
+            color: red;
+        }
+        .score {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #restart {
+            display: none;
             background-color: #008CBA;
             color: white;
             padding: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            width: 100%;
-            font-size: 16px;
         }
-
-        .btn:hover {
-            background-color: #006f8e;
-        }
-
-        .result {
-            text-align: center;
-            font-size: 18px;
-            margin-top: 20px;
-        }
-
-        .result span {
-            font-weight: bold;
-        }
-
-        #timer {
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 20px;
+        #restart:hover {
+            background-color: #007bb5;
         }
     </style>
 </head>
 <body>
-
-    <div class="quiz-container">
-        <h1>Quiz Sonic</h1>
-        <div id="quiz">
-            <p id="timer">Tempo restante: <span id="time">30</span> segundos</p>
-            <div id="question-container">
-                <p class="question" id="question"></p>
-                <ul class="options" id="options"></ul>
-            </div>
-            <button class="btn" id="next-btn" style="display: none;">Próxima Pergunta</button>
-            <div class="result" id="result" style="display: none;">
-                <p>Você obteve <span id="score"></span> de <span id="total-questions"></span> acertos!</p>
-            </div>
+    <div class="game-container">
+        <div class="question" id="question">Clique para começar!</div>
+        <div class="options" id="options">
+            <button onclick="startGame()">Iniciar Jogo</button>
         </div>
+        <div class="timer" id="timer">30</div>
+        <div class="score" id="score">Pontuação: 0</div>
+        <button id="restart" onclick="restartGame()">Reiniciar</button>
     </div>
 
     <script>
-        const sonicQuestions = [
+        const questions = [
+             // Personagens
             { question: "Quem é o melhor amigo de Sonic?", options: ["Tails", "Knuckles", "Amy", "Shadow"], correct: 0 },
             { question: "Qual é o nome da irmã de Tails?", options: ["Mina", "Zazz", "Mimi", "Cosmo"], correct: 3 },
             { question: "Quem é o vilão principal da série Sonic?", options: ["Eggman", "Chaos", "Shadow", "Metal Sonic"], correct: 0 },
             { question: "Qual é o nome do amigo de Sonic que é um ouriço vermelho?", options: ["Knuckles", "Shadow", "Tails", "Silver"], correct: 0 },
             { question: "Qual personagem é conhecido por ser muito rápido e de pele roxa?", options: ["Blaze", "Amy", "Tikal", "Rouge"], correct: 0 },
 
-            // Mais perguntas aqui...
+            // Jogos
+            { question: "Em qual ano foi lançado o primeiro jogo do Sonic?", options: ["1989", "1991", "1993", "1995"], correct: 1 },
+            { question: "Em qual console o primeiro jogo do Sonic foi lançado?", options: ["Super Nintendo", "PlayStation", "Sega Genesis", "Nintendo 64"], correct: 2 },
+            { question: "Qual é o nome do jogo onde Sonic se une a Mario?", options: ["Sonic Generations", "Super Smash Bros.", "Sonic & Mario at the Olympic Games", "Sonic Forces"], correct: 2 },
+            { question: "Qual é o nome do jogo onde Sonic viaja no tempo?", options: ["Sonic the Hedgehog 2006", "Sonic Generations", "Sonic CD", "Sonic Unleashed"], correct: 1 },
+            { question: "Em qual jogo Sonic é transformado em um lobo?", options: ["Sonic the Hedgehog 2006", "Sonic Unleashed", "Sonic Adventure 2", "Sonic Forces"], correct: 1 },
+
+            // Poderes e Habilidades
+            { question: "Qual é o poder de Sonic quando ele coleta todas as Esmeraldas do Caos?", options: ["Super velocidade", "Super força", "Super Sonic", "Teletransporte"], correct: 2 },
+            { question: "Qual é o nome da habilidade que Sonic usa para se transformar em uma forma dourada?", options: ["Super Sonic", "Hyper Sonic", "Sonic Boom", "Chaos Control"], correct: 0 },
+            { question: "Qual é o nome do ataque de Sonic onde ele gira como um torpedo?", options: ["Spin Dash", "Homming Attack", "Sonic Boom", "Super Spin"], correct: 0 },
+            { question: "Qual é o nome da habilidade de Tails que permite que ele voe?", options: ["Spin Dash", "Tail Attack", "Flying Tail", "Flight"], correct: 3 },
+            { question: "Qual é o poder de Knuckles?", options: ["Super força", "Controle do caos", "Voo", "Velocidade"], correct: 0 },
+
+            // Esmeraldas do Caos
+            { question: "Quantas Esmeraldas do Caos existem no total?", options: ["5", "7", "9", "10"], correct: 1 },
+            { question: "Qual é a cor da Esmeralda do Caos que Sonic coleta em Sonic the Hedgehog 2?", options: ["Vermelha", "Azul", "Verde", "Amarela"], correct: 2 },
+            { question: "Em qual jogo as Esmeraldas do Caos são usadas para criar Super Sonic?", options: ["Sonic the Hedgehog", "Sonic Adventure", "Sonic CD", "Sonic Heroes"], correct: 0 },
+            { question: "Qual é a primeira Esmeralda do Caos que Sonic encontra no jogo Sonic Adventure?", options: ["Verde", "Amarela", "Azul", "Roxa"], correct: 2 },
+            { question: "O que acontece quando Sonic coleta todas as Esmeraldas do Caos em Sonic Heroes?", options: ["Ele ganha super velocidade", "Ele fica mais forte", "Ele pode destruir inimigos com um golpe", "Ele se torna Super Sonic"], correct: 3 },
+
+            // Locais
+            { question: "Qual é o nome da cidade de Sonic?", options: ["Mobius", "Emerald Hill", "Station Square", "New York"], correct: 0 },
+            { question: "Em qual local Sonic enfrenta Metal Sonic pela primeira vez?", options: ["Green Hill Zone", "Eggmanland", "Metallic Madness", "Sonic's Secret Base"], correct: 2 },
+            { question: "Qual é o nome do local onde Sonic corre contra o tempo para salvar a Terra em Sonic CD?", options: ["Starlight Zone", "Palmtree Panic", "Tidal Tempest", "Metallic Madness"], correct: 1 },
+            { question: "Onde Sonic e seus amigos competem em Sonic & All-Stars Racing?", options: ["Mobius", "Sega Land", "Planet Freedom", "Sonic City"], correct: 0 },
+            { question: "Qual é o nome do local onde a batalha final de Sonic Generations acontece?", options: ["Green Hill Zone", "Sky Sanctuary", "City Escape", "Final Fortress"], correct: 3 },
+
+            // História e Enredo
+            { question: "Qual é o nome do maior vilão do Sonic que é um cientista louco?", options: ["Eggman", "Metal Sonic", "Chaos", "Shadow"], correct: 0 },
+            { question: "Qual é o nome do irmão de Tails?", options: ["Tikal", "Knuckles", "Cosmo", "Mina"], correct: 2 },
+            { question: "Quem foi o primeiro vilão que Sonic enfrentou?", options: ["Dr. Eggman", "Robotnik", "Chaos", "Shadow"], correct: 0 },
+            { question: "Qual é o nome do aliado de Sonic que tem o poder de controlar o caos?", options: ["Shadow", "Rouge", "Silver", "Amy"], correct: 0 },
+            { question: "Em qual jogo Sonic conhece Shadow pela primeira vez?", options: ["Sonic Adventure", "Sonic Heroes", "Sonic 06", "Sonic the Hedgehog 2006"], correct: 0 }
+
+
         ];
 
         let currentQuestionIndex = 0;
@@ -107,65 +130,25 @@
         let timer;
         let timeRemaining = 30;
 
-        function loadQuestion() {
-            const question = sonicQuestions[currentQuestionIndex];
-            document.getElementById("question").textContent = question.question;
-            const options = document.getElementById("options");
-            options.innerHTML = "";
-            question.options.forEach((option, index) => {
-                const li = document.createElement("li");
-                li.innerHTML = `<button class="btn" onclick="checkAnswer(${index})">${option}</button>`;
-                options.appendChild(li);
-            });
-
-            // Reseta o cronômetro
-            timeRemaining = 30;
-            document.getElementById("time").textContent = timeRemaining;
-            document.getElementById("next-btn").style.display = "none";
-            
-            // Inicia o cronômetro
-            clearInterval(timer);
-            timer = setInterval(countdown, 1000);
-        }
-
-        function countdown() {
-            if (timeRemaining > 0) {
-                timeRemaining--;
-                document.getElementById("time").textContent = timeRemaining;
-            } else {
-                clearInterval(timer);
-                nextQuestion();
+        function shuffleQuestions() {
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
             }
         }
 
-        function checkAnswer(selectedIndex) {
-            const question = sonicQuestions[currentQuestionIndex];
-            if (selectedIndex === question.correct) {
-                score++;
+        function startGame() {
+            score = 0;
+            currentQuestionIndex = 0;
+            document.getElementById('score').innerText = `Pontuação: ${score}`;
+            document.getElementById('restart').style.display = "none";
+            shuffleQuestions();
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= 10) {
+                endGame();
+                return;
             }
-            document.getElementById("next-btn").style.display = "inline-block";
-            clearInterval(timer);
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < sonicQuestions.length) {
-                loadQuestion();
-            } else {
-                showResult();
-            }
-        }
-
-        function showResult() {
-            document.getElementById("quiz").style.display = "none";
-            document.getElementById("result").style.display = "block";
-            document.getElementById("score").textContent = score;
-            document.getElementById("total-questions").textContent = sonicQuestions.length;
-        }
-
-        loadQuestion();
-        document.getElementById("next-btn").addEventListener("click", nextQuestion);
-    </script>
-
-</body>
-</html>
+            cl
